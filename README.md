@@ -13,7 +13,7 @@ Logo de começo, recomendo um guia de criação de uma maquina virtual, para os 
 AVISO!!
 Antes de prosseguir com o uso do arquivo `.iso` será necessario fazer as configurações de rede.
 
-##Configurando a rede
+## Configurando a rede
 
 Após criar a sua maquina virtual, clique na engrenagem amarela para acessar as configuração gerais da maquina.
 
