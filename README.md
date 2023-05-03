@@ -72,3 +72,15 @@ Assim que a instalação terminar, você terá finalmente disponivel o seu ubunt
 ![image](https://user-images.githubusercontent.com/90939515/236054945-61f27a30-cbf5-473f-be96-f032c759662c.png)
 
 Faça seu login, e PARABÉNS! Agora seu ubuntu server está instalado, e podemos começar a configurar o servidor.
+
+# Configurando o Servidor
+
+## Configurações Iniciais
+
+Para inicio, alguns programas terão de ser instalados dentro do Ubuntu. Apesar da interface gráfica se resumir apenas em um terminal, ainda temos acesso a arquivos e diretórios para poder acessar diferentes programas e funções dentro do sistema. Para os não acostumados a utilizar um sistema Linux, todas as ações como instalar, abrir arquivos, editar, compactar, entre outros, são realizados com comandos dentro do terminal.
+Já como introdução, podemos utilizar o comando `sudo su` para acessar a pasta root (ou raíz) do sistema.
+
+> Aviso ⚠️: apesar de utilizarmos constantemente o sistema na pasta root, não é recomendado o uso constante do sistema neste modo em situações normais, ja que qualquer mudanças realizadas ao seu sistema poderá ser feito sem a necessidade de senha de usuário, deixando seu sistema completamente exposto a usuarios mal intencionados.
+
+Todos os comandos do Linux possuem significados, vamos usar o que acabamos de comentar de exemplo:
+**su** 
