@@ -83,4 +83,9 @@ Já como introdução, podemos utilizar o comando `sudo su` para acessar a pasta
 > Aviso ⚠️: apesar de utilizarmos constantemente o sistema na pasta root, não é recomendado o uso constante do sistema neste modo em situações normais, ja que qualquer mudanças realizadas ao seu sistema poderá ser feito sem a necessidade de senha de usuário, deixando seu sistema completamente exposto a usuarios mal intencionados.
 
 Todos os comandos do Linux possuem significados, vamos usar o que acabamos de comentar de exemplo:
-**su** 
+
+**su**: Sigla para SUPER USER, ou super usuario, ou usuario com todos os privilégios no dentro do sistema.
+
+**sudo**: Significa SUPER USER DO, ou super usuario faça, é um comando que permite que seja realizado ações que necessitam uma permissão por um super usuario.
+
+Ou seja, ao dizer `sudo su`, seria dizer SUPER USER DO SUPER USER, fazendo com que você constantemente esteja com todos os privilégios liberados para acessar qualquer ação. Existem diversos outros, porém, por questão de deixar o guia mais dinamico, não será tão focado a explicação todos os comandos. Para os usuários que buscam descobrir o que todos os comandos fazem, recomendo checar o [guia linux](https://guialinux.uniriotec.br) 👍
