@@ -25,6 +25,8 @@ Dentro das configurações, clique nas aba de **rede**
 
 As configurações estarão como padrão em modo NAT, mude para modo bridge, e dentro das configurações avançadas, mude o **Modo Promícuo**, para **Tudo Permitido**, deixando do mesmo jeito que a imagem.
 
+![image](https://user-images.githubusercontent.com/90939515/236036819-bc44dba1-afed-43c0-8e53-5ffecafbbf5f.png)
+
 > Mas o que seria esse modo NAT?
 
 NAT (Network Address Translation) é uma técnica usada em redes de computadores para permitir que vários dispositivos em uma rede local compartilhem um único endereço IP público na Internet.
@@ -37,3 +39,4 @@ Com essa configuração feita, estamos prontos para configurar a sua ISO.
 
 Assim que você colocar seu arquivo `.iso` na maquina, e iniciar a instalação, as configurações irão se iniciar.
 
+![image](https://user-images.githubusercontent.com/90939515/236037037-c97c56d2-e329-44f9-a27c-59402d34a121.png)
