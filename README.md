@@ -143,3 +143,9 @@ Para utiliza-lo basta colocar o IP do servidor, e a porta previamente configurad
 Faça seu login e terá acesso assim como na maquina virtual.
 
 ![Captura de tela 2023-04-18 171550](https://user-images.githubusercontent.com/90939515/236107544-f94b91b9-adb5-451e-971b-d7e515f6af53.png)
+
+# Servidor Web (Apache)
+
+O Apache é um dos servidores web de software livre mais famoso do mundo, usado para hospedar e entregar conteúdo web, como páginas da web, imagens, vídeos, arquivos para download e aplicativos web. Ele funciona como um intermediário entre o navegador do usuário e o servidor de origem que fornece o conteúdo solicitado. Quando um usuário solicita uma página web, o Apache processa a solicitação e envia a resposta de volta para o navegador do usuário.
+
+Para instalar o apache, utilizamos o comando `apt install apache2 apache2-doc`, que instala o apache e a sua documentação
