@@ -149,3 +149,27 @@ Faça seu login e terá acesso assim como na maquina virtual.
 O Apache é um dos servidores web de software livre mais famoso do mundo, usado para hospedar e entregar conteúdo web, como páginas da web, imagens, vídeos, arquivos para download e aplicativos web. Ele funciona como um intermediário entre o navegador do usuário e o servidor de origem que fornece o conteúdo solicitado. Quando um usuário solicita uma página web, o Apache processa a solicitação e envia a resposta de volta para o navegador do usuário.
 
 Para instalar o apache, utilizamos o comando `apt install apache2 apache2-doc`, que instala o apache e a sua documentação
+
+![Captura de tela 2023-04-18 172854](https://user-images.githubusercontent.com/90939515/236109429-9979f39d-7ad5-42e4-a71f-52800210439c.png)
+
+Com a instalação feita, podemos testar pesquisando o IP do servidor dentro de um navegador de internet.
+
+![Captura de tela 2023-04-18 173546](https://user-images.githubusercontent.com/90939515/236109564-ce9993d6-ca95-437b-bad5-0d68b6ae21b1.png)
+
+Antes de configurar, vamos verificar a pasta das configurações do apache usando o comando `cd /etc/apache2` e depois `ls` para listar.
+
+![2023-04-18](https://user-images.githubusercontent.com/90939515/236230701-75c0afe8-9d20-47ec-9439-3ff050868bf3.png)
+
+Para os curiosos em saber o que cada um desses arquivos fazem, estou recomendando o seguinte [GUIA](https://www.digitalocean.com/community/tutorials/how-to-configure-the-apache-web-server-on-an-ubuntu-or-debian-vps) para um estudo mais profundo sobre o uso do apache.
+
+## Configurando o Apache
+
+> Sempre que realizar alguma mudança na configuração de qualquer um dos serviços, recomendo que verifique o `status` do seu serviço, para verificar alguma coisa está errada, seja um comando errado ou um ponto e virgula faltando :+1:
+
+Vamos entrar na pasta **conf-enabled** e abrir o arquivo **charset.conf** para iniciar a configuração
+
+![Captura de tela 2023-04-19 173823](https://user-images.githubusercontent.com/90939515/236232553-cbad9261-a703-468c-b2cd-08aabac1fbcd.png)
+
+Dentro do arquivo, vamos apenas apagar o # do AddDefultCharset UTF-8 para descomenta-lo. Retirar ele permite que nosso servidor aceite caracteres especiais sendo digitados.
+
+![Captura de tela 2023-04-19 173959](https://user-images.githubusercontent.com/90939515/236233092-9ee3e2ed-2e85-423a-9282-4067310fd7de.png)
