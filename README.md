@@ -267,10 +267,45 @@ Nas linhas abaixo faremos as seguintes modificações
 
 ```
 @               IN      NS      pedro.com.
-                IN      A       192.168.43.61
-servidor        IN      A       192.168.43.61
-www             IN      A       192.168.43.61
+                IN      A       192.168.2.61
+servidor        IN      A       192.168.2.61
+www             IN      A       192.168.2.61
 ```
 
 No caso o endereço de IP escrito no documento deve ser o do seu servidor, neste exemplo estou utilizando o meu.
+
+Agora vamos criar a zona reversa do nosso dominio, para isso vamos copiar o arquivo **db.127** com o nome **db.seu_ip_ao_contrario.in-addr.arpa** que no meu caso ficou **db.2.168.192.in-addr.arpa**
+
+Dentro do arquivo faremos mudanças parecidas com a anterior, mas com algumas mudanças
+
+```
+@       IN      NS      servidor.pedro.com.
+        IN      PTR     servidor.pedro.com.
+61      IN      PTR     servidor.pedro.com.
+61      IN      PTR     www.
+```
+
+> Os valores marcados como 61, devem são os ultimos digitos do seu IP
+
+> Ao terminar, não esqueça de salvar, reiniciar o serviço e verificar o status.
+
+Agora vamos criar as zonas DNS, basta irmos no arquivo `named.conf.local` e iremos adicionar as seguintes configurações.
+
+```
+zone "pedro.com" {
+        type master;
+        file "/etc/bind/db.pedro.com";
+};
+
+zone "2.168.192.in-addr.arpa"{
+        type master;
+        file "/etc/bind/db.2.168.192.in-addr.arpa";
+};
+```
+
+![Captura de tela 2023-04-26 172158](https://user-images.githubusercontent.com/90939515/236294501-7dbc0fd7-a1de-49f2-86df-c335cf5eb0d8.png)
+
+Agora vamos mudar o dns do nosso servidor indo em `/etc/resolv.conf` e colocando o ip do nosso servidor.
+
+![Captura de tela 2023-04-26 172447](https://user-images.githubusercontent.com/90939515/236295705-a9bfef03-a9f1-49aa-9f52-be91975cbde6.png)
 
