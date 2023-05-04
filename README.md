@@ -173,3 +173,56 @@ Vamos entrar na pasta **conf-enabled** e abrir o arquivo **charset.conf** para i
 Dentro do arquivo, vamos apenas apagar o # do AddDefultCharset UTF-8 para descomenta-lo. Retirar ele permite que nosso servidor aceite caracteres especiais sendo digitados.
 
 ![Captura de tela 2023-04-19 173959](https://user-images.githubusercontent.com/90939515/236233092-9ee3e2ed-2e85-423a-9282-4067310fd7de.png)
+
+Agora vamos modificar o arquivo **apache2.conf**, para mudar os valores de Time out, em que diminuiremos o tempo de conexão do cliente para não consumir tantos recursos do servidor. Tambem mudaremos o **MaxKeepAliveRequests** que é a quantidade de solicitações que podem ser enviadas por uma unica conexão mantida ativa.
+
+![Captura de tela 2023-04-19 174141](https://user-images.githubusercontent.com/90939515/236235219-3fe29f77-ff96-48eb-a100-7c1894ea3760.png)
+
+![image](https://user-images.githubusercontent.com/90939515/236235541-9e103db9-4cb5-4f92-b7fd-c411c638548f.png)
+
+Agora iremos modificar o **<Directory /usr/share>** onde nele tem o **Require all granted** iremos modificar para **Require all denied** ele define as configurações para o diretório */usr/share* no sistema de arquivos e nesse caso estamos negando o acesso de todas as requisições.
+
+![Captura de tela 2023-04-19 174450](https://user-images.githubusercontent.com/90939515/236238742-a29879ab-c568-425f-a43c-44f300a42600.png)
+
+Agora fechamos, e salvamos o arquivo.
+
+---
+
+Para fazer a checagem das nossas mudanças, utilizamos o comando `/etc/init.d/apache2 restart` para reiniciar e o comando `/etc/init.d/apache2 status` para conferir como está o serviço.
+
+![Captura de tela 2023-04-19 174543](https://user-images.githubusercontent.com/90939515/236239492-879ded04-082d-4cf6-868b-9ab8625120a2.png)
+
+O **Active (running)** indica que está rodando sem problemas.
+
+---
+
+Agora vamos para a pasta sites-available, dentro dessa pasta tem dois arquivos, o 000-default.conf e o default-ssl.conf, faremos uma cópia do 000-defult.conf com o nome de 010-pedro.conf com o código `cp 000-defult.conf 010-pedro.conf`.
+
+![Captura de tela 2023-04-25 170029](https://user-images.githubusercontent.com/90939515/236242798-88c3ec22-8b88-4c5a-9b93-39cc13769521.png)
+
+Vamos desabilitar a configuração **000-default.conf** com o comando `a2dissite 000-defult.conf`, e já reiniciamos e conferimos se está tudo ok. 
+
+![Captura de tela 2023-04-25 170603](https://user-images.githubusercontent.com/90939515/236243378-5141e9aa-4d29-4b5b-b18f-39b904dd16c1.png)
+
+Agora temos somente a nossa configuração ativa vamos modifica-la entrando no arquivo **010-pedro.conf**. A primeira coisa que vamos fazer é apagar a # de **ServerName www.exemple.com** e modificar a url para a ulr que iremos usar futuramente com DNS que será **www.pedrobahury.com** e em **ServerAdmin webmaster@localhost** vou trocar pelo meu email acadêmico **pedro.f@acad.ifma.edu.br**
+
+![Captura de tela 2023-04-25 170818](https://user-images.githubusercontent.com/90939515/236244741-bb900ab4-6fcc-4165-b07f-0126de5e01fc.png)
+
+Após isso, reinicie o servidor, e veja se está tudo certo.
+
+### Adicionando um Site
+
+Para deixar o site mais customizado, vamos acessar o site https://html5up.net/ onde teremos modelos de sites html para baixar.
+
+Antes de baixarmos vamos deletar o site padrão, indo na pasta onde o site está o arquivo do site que é em `/var/www/html` e digitar o comando `rm index.html` que deletará o arquivo **index.html**
+
+Para baixarmos basta copiar o link de download do site e colar ele nesse comando (dentro da pasta /var/www/html) ``wget --no-check-certificate link_de_download``, e utilizaremos o comando ``zip``, para descompactar com `unzip download`
+
+![Captura de tela 2023-04-25 171610](https://user-images.githubusercontent.com/90939515/236251894-d5577bd8-950b-4561-bfdd-980c048b99d4.png)
+
+![Captura de tela 2023-04-25 171814](https://user-images.githubusercontent.com/90939515/236251978-3d39de19-cc64-4194-9438-6e6a6611308e.png)
+
+Agora podemos ver os arquivos descompactados, e remover o arquivo de download usando `rm nome_do_arquivo`
+
+![Captura de tela 2023-04-25 171921](https://user-images.githubusercontent.com/90939515/236250540-1c39f1ac-25dc-485d-b64d-a6ef7d50a014.png)
+
