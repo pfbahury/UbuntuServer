@@ -226,3 +226,51 @@ Agora podemos ver os arquivos descompactados, e remover o arquivo de download us
 
 ![Captura de tela 2023-04-25 171921](https://user-images.githubusercontent.com/90939515/236250540-1c39f1ac-25dc-485d-b64d-a6ef7d50a014.png)
 
+Agora acessando nosso site, poderemos ver o novo visual do nosso site.
+
+![Captura de tela 2023-04-25 172030](https://user-images.githubusercontent.com/90939515/236258782-e17c2346-3133-4b55-8751-59f0ac7324e7.png)
+
+# Serviço DNS
+
+DNS (Domain Name System) é um sistema que converte nomes de domínio em endereços IP. Para que uma pessoa acesse um site na internet, ela precisa digitar o endereço do site no navegador. No entanto, os computadores na Internet usam endereços IP para se comunicar entre si. 
+
+O DNS funciona como um diretório de nomes de domínio e seus respectivos endereços IP. Quando um usuário digita um nome de domínio no navegador, o computador faz uma consulta ao servidor DNS para encontrar o endereço IP correspondente.
+
+O processo funciona assim: quando o navegador envia a solicitação de acesso a um determinado site, ele envia essa solicitação para um servidor DNS. O servidor DNS verifica em sua base de dados qual é o endereço IP associado a esse nome de domínio e envia essa informação de volta para o navegador. O navegador, então, usa esse endereço IP para estabelecer uma conexão com o site.
+
+Para baixar utilizaremos esse comando`apt install bind9 bind9-utils bind9-doc`. Para os mais curiosos que procuram uma explicação mais profunda de cada etapa, e o que cada pacote significa, recomendo checar este [guia](https://www.digitalocean.com/community/tutorials/how-to-configure-bind-as-a-private-network-dns-server-on-ubuntu-18-04)
+
+![Captura de tela 2023-04-25 210042](https://user-images.githubusercontent.com/90939515/236264956-bf7847ef-a668-43ac-ba25-2d3f5d490765.png)
+
+## Arquivos
+
+Os arquivos de configuração ficam na pasta **/etc/bind**
+
+![Captura de tela 2023-04-25 210105](https://user-images.githubusercontent.com/90939515/236265041-a2c5b470-ceb3-4e11-9d67-0aa4c71fbddc.png)
+
+---
+## Configurando
+
+Começamos copiando o arquivo **db.local** com o nome de **db.pedro.com** com o comando `cp nome_do_arquivo nome_do_novo_arquivo`
+
+![Captura de tela 2023-04-25 210403](https://user-images.githubusercontent.com/90939515/236269791-05f6e8a3-5202-4cff-b763-b4b5c7a04809.png)
+
+Agora entramos no arquivo db.pedro.com para configura-lo
+
+![Captura de tela 2023-04-25 210501](https://user-images.githubusercontent.com/90939515/236270610-91baa844-eb00-4234-8b12-7f21738fd01f.png)
+
+O TTL (Time-to-Live) define o tempo que o servidor leva para atualizar a cache dos dominios evitando que fiquem desatualizado
+
+Na linha abaixo do TTL vamos modificar o registro SOA (Start of Authority) para a zona. Ele contém informações de autoridade para a zona, incluindo o nome do servidor primário que é o localhost. e o endereço de e-mail do administrador que é root.localhost que vamos modificar respectivamente para servidor.pedro.com e root.pedro.com as configurações de serial refresh retry expire e negative cache TTL não iremos modificar
+
+Nas linhas abaixo faremos as seguintes modificações
+
+```
+@               IN      NS      pedro.com.
+                IN      A       192.168.43.61
+servidor        IN      A       192.168.43.61
+www             IN      A       192.168.43.61
+```
+
+No caso o endereço de IP escrito no documento deve ser o do seu servidor, neste exemplo estou utilizando o meu.
+
