@@ -88,4 +88,58 @@ Todos os comandos do Linux possuem significados, vamos usar o que acabamos de co
 
 **sudo**: Significa SUPER USER DO, ou super usuario faça, é um comando que permite que seja realizado ações que necessitam uma permissão por um super usuario.
 
-Ou seja, ao dizer `sudo su`, seria dizer SUPER USER DO SUPER USER, fazendo com que você constantemente esteja com todos os privilégios liberados para acessar qualquer ação. Existem diversos outros, porém, por questão de deixar o guia mais dinamico, não será tão focado a explicação todos os comandos. Para os usuários que buscam descobrir o que todos os comandos fazem, recomendo checar o [guia linux](https://guialinux.uniriotec.br) 👍
+Ou seja, ao dizer `sudo su`, seria dizer SUPER USER DO SUPER USER, fazendo com que você constantemente esteja com todos os privilégios liberados para acessar qualquer ação, e com acesso a pasta root. Existem diversos outros, porém, por questão de deixar o guia mais dinamico, não será tão focado a explicação todos os comandos. Para os usuários que buscam descobrir o que todos os comandos fazem, recomendo checar o [guia linux](https://guialinux.uniriotec.br) 👍
+
+![Captura de tela 2023-04-18 154345](https://user-images.githubusercontent.com/90939515/236091294-5b006b93-35d5-431e-b15c-f0c4a0629e17.png)
+
+Em seguida, vamos precisar atualizar nosso `apt`, que é o serviço de gerenciamento de pacotes padrão do Linux que iremos utilizar para instalar todos os outros utilitarios e serviços dentro do servidor. 
+
+![Captura de tela 2023-04-18 154625](https://user-images.githubusercontent.com/90939515/236091605-77dddc1a-1bba-4748-adf9-2ca2e959dda9.png)
+
+Como já comentamos de utilitários, podemos instalar mais alguns de utilidade para o servidor, para isso utilizaremos o seguinte comando: `apt install inetutils-ping net-tools openssh-server`
+
+E o que são esses pacotes?
+
+Nano: é um editor de texto simples e fácil de usar, com recursos básicos como edição, busca e substituição de texto, que utilizaremos para editar configuração de diversos arquivos.
+
+Inetutils-ping: é uma ferramenta que permite testar a conectividade da rede, enviando pacotes de dados para um endereço IP e esperando por uma resposta.
+
+Net-tools: é um conjunto de ferramentas de rede que inclui comandos como ifconfig, route e netstat, que permitem visualizar informações de rede, como endereços IP, rotas e conexões abertas.
+
+OpenSSH-server: é um servidor de protocolo SSH que permite o acesso remoto seguro a um computador ou servidor Linux.
+
+![Captura de tela 2023-04-18 155324](https://user-images.githubusercontent.com/90939515/236096338-6c688348-dd5b-48e8-b783-f7cd70b921bf.png)
+
+# Serviço SSH
+
+Para iniciar a configuração do SSH, iremos no arquivo de configuração, utilizando o comando `nano` e em seguida o endereço do arquivo: `/etc/ssh/sshd_config` para editar o texto do arquivo.
+
+![image](https://user-images.githubusercontent.com/90939515/236104334-4bb34ef3-8863-4968-b298-28b6c74dbe18.png)
+
+Dentro do arquivo, terá uma linha escrita `#Porta 22`, retirando o #, a linha ficaria descomentada, fazendo ela ser executada pelo arquivo, logo em seguida, mude a porta, no meu caso, coloquei como 222.
+
+![Captura de tela 2023-04-18 171348](https://user-images.githubusercontent.com/90939515/236104525-52e0bce9-9e37-4926-a148-d74f8443374f.png)
+
+Aperte Ctrl+X para sair e confirme em salvar o arquivo, logo em seguida, o serviço deve ser reiniciado, para isso utilizamos o comando `/etc/init.d/ssh restart`
+
+![Captura de tela 2023-04-18 171437](https://user-images.githubusercontent.com/90939515/236104663-d2f16319-3823-438c-9326-0a0aa5193b16.png)
+
+Para descobrir se o estado do serviço SSH está funcionando como deveria, utilizamos o comando `/etc/init.d/ssh status`
+
+![image](https://user-images.githubusercontent.com/90939515/236105018-609ac877-1c92-408d-8574-056ed2833ce5.png)
+
+## Acessando o SSH
+
+Para fazer a conexão, precisamos do endereço de IP do servidor, para isso utilizamos o comando `ipconfig`
+
+Descobrindo seu IP, seguimos para a conexão na maquina local, no caso do Windows, usaremos um software chamado [**Putty**](https://www.putty.org) que funciona como como cliente SSH para a conexão, e possui uma instalação bem simples, na qual basta apenas este [site](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) e baixar o instalador para o windows.
+
+Para utiliza-lo basta colocar o IP do servidor, e a porta previamente configurada.
+
+![Captura de tela 2023-04-18 171516](https://user-images.githubusercontent.com/90939515/236107447-c2a6b930-ac30-4cc2-9f1e-daec905d897f.png)
+
+![Captura de tela 2023-04-18 171535](https://user-images.githubusercontent.com/90939515/236107465-10618bd2-82e2-49be-8367-85f1762c984c.png)
+
+Faça seu login e terá acesso assim como na maquina virtual.
+
+![Captura de tela 2023-04-18 171550](https://user-images.githubusercontent.com/90939515/236107544-f94b91b9-adb5-451e-971b-d7e515f6af53.png)
