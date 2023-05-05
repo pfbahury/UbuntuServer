@@ -695,3 +695,42 @@ Acessando a pasta, veremos nossos certificados
 
 Após criado, iremos acessar a configuração do ssl com o comando `nano /etc/apache2/sites-available/default-ssl.conf`, e em **SSLCertificateFile** passaremos o endereço do certificado em **SSLCertificateKeyFile**
  passaremos o endereço da nossa chave privada, no meu caso `/etc/apache2/ssl/pedro.crt` e `/etc/apache2/ssl/pedro.key` respectivamente. 
+
+Reinicie o serviço e tente acesse seu servidor no navegador.
+
+![Captura de tela 2023-05-04 203420](https://user-images.githubusercontent.com/90939515/236557793-9eb452a2-f490-4e74-825b-5f5ef7296217.png)
+
+Ao acessar seu site, pode até checar seu certificado 
+
+![Captura de tela 2023-05-04 203617](https://user-images.githubusercontent.com/90939515/236557879-65a7f1aa-9497-464e-9e7e-74ff28c78398.png)
+
+# Serviço VPN
+
+VPN (Virtual Private Network) é uma tecnologia de rede que permite que usuários acessem a internet de forma segura e privada através de uma conexão criptografada, mesmo quando estão usando uma rede pública, como a internet.
+
+## Instalação
+
+Para realizar a instalação usaremos o comando `wget https://git.io/vpn -O openvpn-install.sh && bash openvpn-install.sh`, e a instalação se iniciará.
+
+
+## Configurando
+
+A configuração tem um pequeno formulario de configuração onde varias perguntas podem ser feitas, na qual ele irá perguntar o ip da usa maquina, mas se voce apertar **Enter** pode ser colocado um ip default.
+
+Em seguida será perguntado qual o protocolo de comunicação, na qual escolhi UDP, devido sua maiorvelocidade.
+
+A terceira questiona qual porta você quer acessar, apertando enter, sem digitar nada, a porta default 1194 pode ser selecionada.
+
+Em seguida pode ser escolhido o DNS
+
+E por fim, o nome do cliente, que fica por escolha pessoal.
+
+![2023-05-02 (2)](https://user-images.githubusercontent.com/90939515/236559017-3cad0ba7-5485-4463-95a7-c8497c6b6816.png)
+
+agora sua configuração fica salva na pasta root.
+
+![image](https://user-images.githubusercontent.com/90939515/236559165-330fa112-28f6-404a-863e-f04878472ae2.png)
+
+E pronto, agora voce tem um vpn feito, que pode ser compartilhado e adicionado em sistemas operacionais como o Linux.
+
+E isso encerra o projeto, com todas as configurações feitas para o servidor, obrigado por ler até aqui!
