@@ -6,7 +6,7 @@ Para o prosseguimento dentro deste "guia", serão necessário algumas preparaç�
 
 Para realizar as atividades será necessario a utilização de uma maquina virtual, ou [VirtualBox](https://www.virtualbox.org), e uma imagem `.iso` do sistema operacional que iremos utilizar, neste caso, o [Ubuntu Server](https://ubuntu.com/download/server)
 
-#Configurando a Maquina virtual
+# Configurando a Maquina virtual
 
 Logo de começo, recomendo um guia de criação de uma maquina virtual, para os que não possuem o costume de utilizar uma, recomendo o seguinte [guia](https://tecnoblog.net/responde/como-criar-uma-maquina-virtual-virtualbox/)
 
