@@ -396,3 +396,63 @@ Para instalar o Samba basta usar o comando `apt install samba samba-common`
 Antes de iniciar a configuração, vamos realizar o backup do arquivo de configuração **smb.conf** que está na pasta `/etc/samba`
 
 ![Captura de tela 2023-05-01 210752](https://user-images.githubusercontent.com/90939515/236500558-8efb7c7f-2a5b-4388-ae83-33fa942e807f.png)
+
+Vamos abrir o arquivo **smb.conf** para configura-lo, selecione e apague toda essa configuração que veio nele.
+
+No linux, pode selecionar e segurar `Shift + seta pra baixo`, e para apagar, pressione `ctrl + k`. No caso do Windows, se estiver utilizando o Putty, pressione `alt + shift + t`, para recortar todo o arquivo.
+
+![Captura de tela 2023-05-01 211640](https://user-images.githubusercontent.com/90939515/236503326-bd443fa0-a563-498a-89c3-5f3a6edf9b53.png)
+
+Vamos adicionar um exemplo de configuração.
+
+```
+[global]
+netbios name = usuarioftp1
+workgroup = usuarioftp1
+server string = Servidor dos Alunos
+security = user
+
+[public]
+path = /home/samba
+guest ok = yes
+browseable = yes
+writeable = yes
+printable = no
+create mask = 0777
+force create mode = 0777
+
+[printers]
+comment = Compartilhando as Impressoras
+print ok = yes
+guest ok = yes
+path = /var/spool/samba
+
+[pedrobahury]
+Comment = Diretórios dos alunos
+path = /etc/samba/elvis
+valid users = usuarioftp1
+create mask = 0777
+force create mode = 0777
+read only = no
+```
+
+![Captura de tela 2023-05-01 211640](https://user-images.githubusercontent.com/90939515/236505771-19bbaca0-2dcf-43f4-ae10-f1d251503919.png)
+
+Agora iremos reiniciar o serviço digitando o comando `/etc/init.d/smbd restart` e para verificar o status do serviço `/etc/init.d/smbd status`
+
+![Captura de tela 2023-05-01 211759](https://user-images.githubusercontent.com/90939515/236506061-1ae818d8-9888-463b-9c0b-2f04ebad365c.png)
+
+Vamos criar as pastas agora para poder acessá-las. Primeiro criei a pasta **pedrobahury** usando o comando `mkdir nome_da_pasta`, listei as permissões da pasta com `ls -l` alterei o usuario da pasta para o usuarioftp1 com o comando `chown usuário:grupo_do_usuário pasta` e em seguida alterei as permissões com o comando `chmod 777 pasta` permitindo que a pasta seja totalmente aberta.
+
+![Captura de tela 2023-05-01 212443](https://user-images.githubusercontent.com/90939515/236507003-344a51c8-56cb-4cd4-9880-3cdd00352441.png)
+
+Agora vamos adicionar o usuarioftp1 aos usuarios samba com o comando `smbpasswd -a nome_de_usuario`
+
+![Captura de tela 2023-05-01 212509](https://user-images.githubusercontent.com/90939515/236507812-07a60f1d-0e4e-42e0-98f3-6b2cb5aa553b.png)
+
+Assim como o podemos fazer login utilizando um endereço smb e utilizar a pasta.
+
+![image](https://user-images.githubusercontent.com/90939515/236508161-f1d4f80f-a3d4-4a9a-8d93-dac3965e3993.png)
+
+![image](https://user-images.githubusercontent.com/90939515/236508198-9d483705-37ef-4e9a-a955-f5c8e32ea79c.png)
+
