@@ -456,3 +456,29 @@ Assim como o podemos fazer login utilizando um endereço smb e utilizar a pasta.
 
 ![image](https://user-images.githubusercontent.com/90939515/236508198-9d483705-37ef-4e9a-a955-f5c8e32ea79c.png)
 
+# Serviço DHCP
+
+DHCP (Dynamic Host Configuration Protocol) é um protocolo de rede que permite a atribuição dinâmica de endereços IP e outras configurações de rede para dispositivos conectados em uma rede.
+
+## Instalação
+
+Para instalar o serviço basta utilizar o comando `apt install isc-dhcp-server` que baixará os pacotes
+
+## Configurando o Serviço
+
+Primeiramente configuramos o arquivo `nano /etc/default/isc-dhcp-server`, nesse arquivo apontamos qual será o nosso arquivo de configuração e também qual interface de rede nosso serviço atuará. Para isso vamos descomentar o `DHCPDv4_CONF=/etc/dhcp/dhcpd.conf` que é onde nosso arquivo de configuração está, agora vamos definir nossa interface de rede a qual nosso serviço atuará, para saber qual interface de rede vamos utilizar comando `ifconfig` e escolher a interface que está utilizando, para saber qual interface está utilizando basta ver qual delas tem o **IP** da rede em que você está conectado. no meu caso é a **enp0s3**
+
+![image](https://user-images.githubusercontent.com/90939515/236511379-7502c01f-a2b4-4b56-936b-565fe8e9b48a.png)
+
+![Captura de tela 2023-05-01 213955](https://user-images.githubusercontent.com/90939515/236511479-eb17b9a0-52bb-4a56-95a4-a7b62ff01220.png)
+
+Agora podemos ir para a pasta de serviço `cd /etc/dhcp/` e abrir o arquivo **dhcpd.conf** que faz a configuração do serviço DHCP e define as configurações de rede.
+
+Abrindo ele faremos as seguintes configurações, em domain-name irei colocar o meu pedrobahury.com que foi criado anteriormente e em domain-name-servers colocarei o ip do meu servidor de DNS que é o 192.168.2.102 e mais outro sendo ele o servidor de DNS da CloudFlare 1.1.1.1. O default lease time que é o tempo em que o cliente pode usar o endereço IP atribuído antes que ele precise renovar com o servidor DHCP vamos deixar em 86400 que é 24 horas em segundos, já o max lease time é o tempo máximo que o endereço IP pode ser mantido pelo cliente antes de precisar ser renovado colocaremos em 172800 que dá 48 horas em segundos. Vamos adicionar o ignore client-updates que faz que o servidor não atualize o DNS do cliente automáticamente quando ele solicita um novo ip.
+
+![image](https://user-images.githubusercontent.com/90939515/236514437-3d3ddf8f-b48b-4423-87ee-38324c2e9da9.png)
+
+Agora adicionaremos uma maquina para terum ip fico, e um exemplo de configuração de subnet.
+
+![Captura de tela 2023-05-01 215038](https://user-images.githubusercontent.com/90939515/236514620-b828c525-cc3d-4ab3-8df4-049209d80ebf.png)
+
