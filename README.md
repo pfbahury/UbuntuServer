@@ -309,3 +309,90 @@ Agora vamos mudar o dns do nosso servidor indo em `/etc/resolv.conf` e colocando
 
 ![Captura de tela 2023-04-26 172447](https://user-images.githubusercontent.com/90939515/236295705-a9bfef03-a9f1-49aa-9f52-be91975cbde6.png)
 
+Podemos testar usando o `nslookup ip_ou_dominio` e abrindo pelo navegador.
+
+![image](https://user-images.githubusercontent.com/90939515/236469654-88c9e515-55ad-4e4f-9a03-6835931aa9d2.png)
+
+Nesta print estou utilizando outra maquina virtual, com o sistema [Pop!_OS](https://pop.system76.com) para realizar testes.
+
+# Serviço FTP
+
+FTP (File Transfer Protocol) é um protocolo usado para transferir arquivos pela Internet entre computadores. Ele foi criado para permitir que usuários de diferentes sistemas operacionais possam compartilhar arquivos de forma simples e eficiente.
+
+## Instalação
+
+Para instalar vamos utilizar o comando `apt install proftpd` que baixará o pacote proftpd
+
+## Configurando o Serviço
+
+Para iniciarmos a configuração, iremos ao arquivo `/etc/proftpd/proftpd.conf` nele o nome do servidor "Debian "deve ser trocado pelo seu nome.
+
+![Captura de tela 2023-04-27 173253](https://user-images.githubusercontent.com/90939515/236477395-edbd8e6d-303c-48ad-8428-5c5cba5e493b.png)
+
+![image](https://user-images.githubusercontent.com/90939515/236477456-878dd3a1-4360-44a9-8b19-d1454ab86390.png)
+
+Em **ShowSymLinks** deixaremos em off, essa configuração determina se os links do sistema aparecem ou não para o usuário, como não queremos isso, deixaremos desligado.
+
+![image](https://user-images.githubusercontent.com/90939515/236478306-01caa5f3-2412-4f0d-8fe5-64b1fdc35672.png)
+
+Vamos descomentar as configurações **DefaultRoot~** e **RequireValidShell off**, e colocar um espaço na primeira configuração deixando `DefaultRoot ~` para evitar qualquer erro. O **DefaultRoot** define o diretório inicial padrão para o usuário FTP ao fazer login, no nosso caso o **~** representa o diretório home do usuário,após o login, o usuário será direcionado para o seu diretório home no servidor que no nosso caso será o **/home/usuarioftp1** já o **RequireValidShell off** define se permite que usuários com um shell inválido façam login no servidor FTP, como o valor que colocamos é off isso permite que qualquer usuário faça login, mesmo que o shell listado em /etc/passwd seja inválido.
+
+![Captura de tela 2023-04-27 173532](https://user-images.githubusercontent.com/90939515/236479889-77759a0a-2040-4554-93c4-faddafb470c1.png)
+
+No final do arquivo adicionamos as configurações TransferRate RETR 30:100 e RootLogin Off onde o TransferRate RETR 30:100 define o limite de taxa de transferência de download para os arquivos, o limite é definido como sendo de 30 a 100 KB/s. Já o RootLogin Off desabilita o login de usuários com o usuário root.
+
+![Captura de tela 2023-04-27 173657](https://user-images.githubusercontent.com/90939515/236481195-507970c2-d598-4270-9ed8-1d92424532d0.png)
+
+Após isso, salve o serviço utilizando o comando `/etc/init.d/proftpd restart` e `/etc/init.d/proftpd status` para ver o status do serviço.
+
+![Captura de tela 2023-04-27 174335](https://user-images.githubusercontent.com/90939515/236482197-23bc26e5-027f-4b42-82d8-593078f8f520.png)
+
+Após Configurarmos, será criado um usuario para ter acesso ao ftp, para fazer isso, só é preciso utilizar o comando `adduser nome_do_usuário` e emm seguida criar uma **senha**.
+
+![Captura de tela 2023-04-27 174533](https://user-images.githubusercontent.com/90939515/236490778-678e2044-2d0a-4222-bf2d-70453c54e8b0.png)
+
+O formulário não é obrigatório de se preencher, pode pular as opções apertando "Enter"
+
+---
+
+Agora vamos modificar o arquivo `/etc/passwd` (*:warning: Cuidado ao mexer nessa configuração pois você pode perder o acesso ao servidor permanentemente, modifique somente o usuário que criou*) vamos modificar a pasta do usuário que acabamos de criar para ficar assim `/home/usuarioftp1/ftp` e a pasta do shell para `/usr/sbin/nologin` por esse motivo, configuramos o **RequireValidShell** em **off**
+
+![Captura de tela 2023-04-27 174645](https://user-images.githubusercontent.com/90939515/236492185-aad3f8e7-2381-4f82-98c3-08db58ff225b.png)
+
+![Captura de tela 2023-04-27 174814](https://user-images.githubusercontent.com/90939515/236492228-a183efe6-e5fc-4078-a136-e91cfa5a5d79.png)
+
+Agora criaremos a pasta ftp já que definimos anteriormente a pasta do usuário como `/home/usuarioftp1/ftp`, para isso vamos na pasta `/home` e no usuário que no caso é **usuarioftp1** em `/home/usuarioftp1` e estando nela digitamos `mkdir ftp` para criar a pasta **ftp**
+
+![Captura de tela 2023-04-27 174859](https://user-images.githubusercontent.com/90939515/236495097-6891cbd8-29ce-4fa8-a140-5c9ce2f72afe.png)
+
+Em seguinte salve, reinicie , e verifique o status do serviço.
+
+Vamos mudar as permissões da pasta com o comando `chown usuarioftp1:usuarioftp1 ftp` que troca o usuário da pasta **ftp** para o **usuarioftp1** pois como criamos ela com usuário root as suas permissões estavam somente para o usuário padrão, e o `chmod 770 ftp` esse comando  modifica permissões de acesso a um arquivo ou diretório.
+
+![Captura de tela 2023-04-27 175000](https://user-images.githubusercontent.com/90939515/236495747-139b19f9-38ce-4207-91e0-f6524e82cae0.png)
+
+Salve, reinicie e verifique novamente o status.
+
+Para conectar com o seu ftp, temos duas opções, dentro do windows, será necessario usar um programa externo, tal como o [FilleZilla](https://filezilla-project.org). Já no caso do linux, utilize o gerenciador de arquivos, apenas digite a url ftp//ip_do_servidor.
+
+![image](https://user-images.githubusercontent.com/90939515/236496671-e41209d9-1f40-49a4-864b-28aeffbec51d.png)
+
+Faça o login, com seu usuário criado, e terá acesso a sua pasta.
+
+![image](https://user-images.githubusercontent.com/90939515/236496929-45c6ddfb-6a05-4789-b1fa-06bbf9d990f8.png)
+
+# Samba
+
+O samba é uma outra solução de compartilhamento de arquivos, também de impressoras. Com o Samba, é possível criar um servidor de arquivos e impressoras em um sistema operacional Linux ou Unix, por exemplo, que pode ser acessado por computadores Windows. 
+
+## Instalação
+
+Para instalar o Samba basta usar o comando `apt install samba samba-common`
+
+![Captura de tela 2023-05-01 210346](https://user-images.githubusercontent.com/90939515/236500049-08b54b27-82de-4c7d-b659-5d22a7c2629d.png)
+
+## Configuração do Serviço
+
+Antes de iniciar a configuração, vamos realizar o backup do arquivo de configuração **smb.conf** que está na pasta `/etc/samba`
+
+![Captura de tela 2023-05-01 210752](https://user-images.githubusercontent.com/90939515/236500558-8efb7c7f-2a5b-4388-ae83-33fa942e807f.png)
