@@ -429,7 +429,7 @@ path = /var/spool/samba
 
 [pedrobahury]
 Comment = Diretórios dos alunos
-path = /etc/samba/elvis
+path = /etc/samba/pedrobahury
 valid users = usuarioftp1
 create mask = 0777
 force create mode = 0777
@@ -478,7 +478,220 @@ Abrindo ele faremos as seguintes configurações, em domain-name irei colocar o 
 
 ![image](https://user-images.githubusercontent.com/90939515/236514437-3d3ddf8f-b48b-4423-87ee-38324c2e9da9.png)
 
-Agora adicionaremos uma maquina para terum ip fico, e um exemplo de configuração de subnet.
+Agora adicionaremos uma maquina para ter um ip fixo, e um exemplo de configuração de subnet.
+
+```
+host meupcfixo {
+  hardware ethernet 08:00:07:26:c0:a5;
+  fixed-address 192.168.2.12;
+}
+
+subnet 192.168.2.0 netmask 255.255.255.0 {
+  range 192.168.2.2 192.168.43.254;
+  option domain-name-servers 192.168.43.227;
+  option domain-name "pedrobahury.com";
+  option routers 192.168.2.1;
+  option broadcast-address 192.168.43.255;
+  default-lease-time 600;
+  max-lease-time 7200;
+}
+```
+Adapte código para a sua rede.
 
 ![Captura de tela 2023-05-01 215038](https://user-images.githubusercontent.com/90939515/236514620-b828c525-cc3d-4ab3-8df4-049209d80ebf.png)
 
+Vamos reiniciar e conferir o status com `/etc/init.d/isc-dhcp-server restart` e `/etc/init.d/isc-dhcp-server status`
+
+![Captura de tela 2023-05-01 215143](https://user-images.githubusercontent.com/90939515/236525937-56155a1c-e2e0-459c-ae71-f0051548013a.png)
+
+Em caso de erro você pode verificar o log do serviço com esse comando `journalctl -u isc-dhcp-server`.
+
+# Servido Proxy (Squid)
+
+O Squid funciona como um intermediário entre os clientes da rede e os servidores da Internet, armazenando em cache as páginas da Web que são frequentemente acessadas pelos usuários. Quando um cliente solicita uma página, o Squid verifica se ela já está armazenada em seu cache. Se sim, o Squid retorna a página armazenada em cache, em vez de recuperá-la novamente da Internet. Isso reduz o tempo de espera e a largura de banda necessária para acessar o conteúdo da Web.
+
+## Instalação 
+
+Para instalar o serviço utilizamos o comando `apt install squid` e a instalação se iniciará
+
+## Configuração do Serviço
+
+Vamos entrar na pasta de serviço `cd /etc/squid` e abrir o arquivo com `nano squid.conf`
+
+![Captura de tela 2023-05-01 215758](https://user-images.githubusercontent.com/90939515/236536109-20bb9528-32b2-4792-9627-b24cedd1cbf1.png)
+
+Vamos limpar todo o arquivo com o comando `echo "0" > squid.conf` que substituirá todos os dados do arquivo po "0", assim o arquivo terá apenas um 0 dentro dele.
+
+![Captura de tela 2023-05-01 215903](https://user-images.githubusercontent.com/90939515/236536342-e2be429a-02fa-414a-bd4c-c8381afa03a3.png)
+
+Colocaremos essa configuração de exemplo no Squid.
+
+```
+http_port 3128 
+error_directory /usr/share/squid/errors/Portuguese
+cache_mem 1024 MB
+cache_dir ufs /var/spool/squid 1000 16 256
+maximum_object_size_in_memory 64 KB
+maximum_object_size 50 MB
+cache_swap_low 70
+cache_swap_high 95
+
+access_log daemon:/var/log/squid/access.log squid
+cache_log /var/log/squid/cache.log
+
+acl localnet src 192.168.2.0/24
+acl Safe_ports port 80 # http
+acl Safe_ports port 21 # ftp
+acl Safe_ports port 443 # https
+http_access deny !Safe_ports
+
+acl sitesproibidos url_regex -i "/etc/squid/sitesproibidos"
+http_access deny localnet sitesproibidos
+http_access allow localnet
+http_access allow all
+```
+
+Para um guia de explicação recomendo seguir este [Tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-squid-proxy-on-ubuntu-20-04)
+
+As pastas ficam deste jeito com essa configuração
+
+![image](https://user-images.githubusercontent.com/90939515/236538187-1a84a221-a49c-413d-ab3c-d85410c90b71.png)
+
+Dentro da pasta **sitesprobidos**, podemos ver os endereços que queremos bloquear.
+
+![image](https://user-images.githubusercontent.com/90939515/236538708-a9fa4cc2-e0c1-4682-99c1-58a84ff29d85.png)
+
+Agora iremos configurar o arquivo `/proc/sys/net/ipv4/ip_forward` que é usado para ativar ou desativar o encaminhamento de pacotes IP entre as interfaces de rede de um sistema Linux, fazemos isso apenas mudando seu valor de 0 para 1 com o comando `echo 1 > /proc/sys/net/ipv4/ip_forward`
+
+![Captura de tela 2023-05-01 220945](https://user-images.githubusercontent.com/90939515/236539262-9131acc6-95d6-421b-b9cc-7f743535ca73.png)
+
+Agora utilizamos o comando `iptables -t nat -A POSTROUTING -o enp0s3 -s 192.168.43.0/24 -j MASQUERADE` para adicionar uma regra a tabala **nat** do iptables, permitindo o mascaramento de endereço de rede.
+
+Reinicie seu serviço logo em seguida e verifique o status, se estiver tudo bem, nosso proxy ja está funcionando.
+
+![Captura de tela 2023-05-01 221448](https://user-images.githubusercontent.com/90939515/236539786-b8260c6d-1e75-43c4-a542-27fd958244d5.png)
+
+Vamos configurar o nosso sistema operacional, irei usar o Pop_OS, mas este [guia](https://canaltech.com.br/windows/windows-10-como-configurar-um-proxy/) demonstra como usar no Windows 10 para adicionar nosso proxy. Para isso vamos nas configurações e depois em rede, para configurarmos manualmente, e estaremos pronto.
+
+![image](https://user-images.githubusercontent.com/90939515/236540584-58ae9571-2d1a-45dd-8a4f-6512e6dc2ae2.png)
+
+# Serviço IPSec
+
+IPsec (Internet Protocol Security) é um protocolo de segurança para redes de computadores que visa garantir a confidencialidade, integridade e autenticidade dos dados transmitidos na rede. Ele é usado para proteger a comunicação entre dispositivos em uma rede, fornecendo um conjunto de mecanismos de segurança para proteger os dados.
+
+## Instalação 
+
+Para realizar a instalação o IPSec, pdemos utilizar o comando  `apt-get install strongswan`.
+
+## Configurando o Serviço
+
+Para configurar o serviço, começaremos editando o arquivo `/etc/ipsec.conf`
+
+![Captura de tela 2023-05-01 221602](https://user-images.githubusercontent.com/90939515/236542050-169beb2c-9ecd-4baf-9c17-d5865d111c19.png)
+
+Existem diversas configurações diferentes neste serviço, porém faremos apenas uma para funcnionar entre 2 computadores.
+Adicionaremos as seguintes configurações.
+
+![Captura de tela 2023-05-01 221705](https://user-images.githubusercontent.com/90939515/236542958-5fdebb50-9fda-46b5-be73-c4175ad5565a.png)
+
+Adicionaremos o seguinte comando no arquivo `/etc/ipsec.secrets`
+
+![image](https://user-images.githubusercontent.com/90939515/236543569-04c66ed0-3e61-4976-b786-621dd5c3d8c4.png)
+
+
+Aqui colocamos o IP de origem e em seguida o de destino, logo após PSK (Pre-Shared Key) que significa Chave Pré Compartilhada que é um método de autenticação, logo em seguida, digaremos a senha, na qual voce deve colocar uma senha forte.
+
+Agora podemos reiniciar e ver o status do serviço com `/etc/init.d/ipsec restart` e `/etc/init.d/ipsec status`
+
+![Captura de tela 2023-05-01 221850](https://user-images.githubusercontent.com/90939515/236543742-a5febbb2-79cc-483e-bf2c-82709518d74b.png)
+
+Sua maquina agora está configurada, caso queira fazer a comunicação entre duas maquinas, apenas configure da mesma maneira que configurou esta, e logo em seguida, você pode realizar testes como o de Ping, ou utilizando o programa [Wireshark](https://www.wireshark.org)
+
+# Webmin
+
+O Webmin é uma interface de usuário baseada na web para gerenciamento de sistemas Unix-like. Ele permite que os administradores de sistema gerenciem facilmente as configurações do sistema, serviços, contas de usuário, arquivos e muito mais, tudo através de uma interface amigável baseada em navegador.
+
+## Instalação
+
+Para instalar o webmin basta usar o comando `curl -o setup-repos.sh https://raw.githubusercontent.com/webmin/webmin/master/setup-repos.sh` e depois disso executar o comando `sh setup-repos.sh` após finalizar o processo, é digitamos `apt-get install webmin` após executar esse comando seu Webmin estará funcionando.
+
+## Acesso
+
+Para acessar o Webmin, só é preciso digitar o seu ip na porta 10000, no meu caso `192.168.2.100:10000`, ira aparecer uma mensagem de aviso, mas não se preocupe, isso ocorre devido a comunicação criptografada do HTTPS, mas é totalmente seguro de se acessar.
+
+![image](https://user-images.githubusercontent.com/90939515/236548202-c3c1d18b-622a-4bc0-b9aa-da5c91dca96d.png)
+
+Com ele podemos ver diversas informações sobre o nosso sistema 
+
+![image](https://user-images.githubusercontent.com/90939515/236548352-943652f0-4d9c-49c6-811e-59398bde5947.png)
+
+Indo na aba de servidores podemos checar todos os nossos serviços.
+
+![image](https://user-images.githubusercontent.com/90939515/236548592-7bcd3f1f-78da-42c4-970d-55f505f9a2c8.png)
+
+Incluindo configurações feitas como no DHCP
+
+![image](https://user-images.githubusercontent.com/90939515/236548740-f1ecf3a2-9106-4a8f-a339-0659671d575a.png)
+
+Até mesmo os arquivos de configuração podem ser modificados por aqui
+
+![image](https://user-images.githubusercontent.com/90939515/236552406-746e15dd-3be8-4b04-87a7-4f1f2addd184.png)
+
+Existem diversas outras funções dentro do Webmin, esses são apenas alguns exemplos.
+
+# Monitorix
+
+O Monitorix é um software livre e de código aberto que funciona como uma ferramenta de monitoramento de sistema e rede em tempo real. Ele é projetado para monitorar o desempenho do sistema e dos serviços em tempo real e exibir as informações em gráficos fáceis de entender e personalizáveis.
+
+## Instalação
+
+Para instalar o monitorix basta digitar o comando `sudo apt install monitorix` 
+
+## Detalhes
+
+Após instalar, para acessar o serviço, basta ir no ip do seu site na porta 8080/monitorix no meu caso ficou assim 192.168.2.100:8080/monitorix. 
+
+![image](https://user-images.githubusercontent.com/90939515/236554212-4b7aaaab-0dbf-462f-8cda-429796d830ef.png)
+
+Ele exibe diversos gráficos como:
+
+> Uso da CPU
+
+> Uso da memória
+
+> Uso de disco
+
+> Uso de rede (taxa de transferência, pacotes, erros)
+
+> Atividade do sistema (processos em execução, interrupções)
+
+Entre outros.
+
+# Serviço SSL
+
+SSL (Secure Sockets Layer) é um protocolo de segurança que fornece comunicação criptografada e autenticada entre clientes e servidores na internet. Ele é usado para proteger a integridade e a privacidade dos dados transmitidos entre um navegador da web e um servidor web.
+
+## Instalação
+
+Para instalar o SSL basta digitar esse comando `apt-get install openssl` que o SSL será instalado em seu servidor.
+
+## Configurando
+
+Para iniciar nossas configurações vamos habilitar nosso SSL no apache com o comando `a2enmod ssl` e agora reiniciar o serviço, dessa vez iremos utilizar o comando `systemctl restart apache2` para reiniciar o apache.
+
+Vamos criar a pasta **ssl** dentro da pasta do apache com o comando `mkdir /etc/apache2/ssl`, será nessa pasta onde vamos colocar nossos certificados.
+
+![image](https://user-images.githubusercontent.com/90939515/236555314-e15c5e18-b347-4a55-85b5-cb5ecf9edcb0.png)
+
+Agora vamos criaremos nossos certificados com o comando 
+`openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout /etc/apache2/ssl/elvis.key -out /etc/apache2/ssl/elvis.crt`
+
+Quando o comando for executado, se iniciará um formulario, que deve ser preenchido para por as informações do certificado. No caso, n coloquei respostas muito precisas, mas em ambientes profissionais, é recomendado o uso de informações corretas.
+
+![Captura de tela 2023-05-04 202940](https://user-images.githubusercontent.com/90939515/236555832-c957b0b9-2e25-4d33-b576-8bfbc906abe6.png)
+
+Acessando a pasta, veremos nossos certificados
+![Captura de tela 2023-05-04 203010](https://user-images.githubusercontent.com/90939515/236555923-12b9fe3b-e39a-4080-93bb-74cb195e3d2e.png)
+
+Após criado, iremos acessar a configuração do ssl com o comando `nano /etc/apache2/sites-available/default-ssl.conf`, e em **SSLCertificateFile** passaremos o endereço do certificado em **SSLCertificateKeyFile**
+ passaremos o endereço da nossa chave privada, no meu caso `/etc/apache2/ssl/pedro.crt` e `/etc/apache2/ssl/pedro.key` respectivamente. 
